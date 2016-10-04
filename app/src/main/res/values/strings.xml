@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Nota Entidade</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="adicionar">Adicionar</string>
+    <string name="share">Compartilhar</string>
+    <string name="nfp_data_default">09/03/2015</string>
+    <string name="nfp_value_default">R$ 2.345,67</string>
+    <string name="add_random">Adicionar Novo</string>
+    <string name="delete_all">Delete All</string>
+</resources>

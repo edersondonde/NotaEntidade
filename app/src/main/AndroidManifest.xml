@@ -18,11 +18,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
-            android:authorities="br.com.edonde.notaentidade"
             android:name=".data.NotaFiscalProvider"
+            android:authorities="br.com.edonde.notaentidade"
             android:exported="false"
-            android:syncable="true"/>
+            android:syncable="true" />
+
+        <activity
+            android:name=".DetailActivity"
+            android:label="@string/title_activity_detail"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="br.com.edonde.notaentidade.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

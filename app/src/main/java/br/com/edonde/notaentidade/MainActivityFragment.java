@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -53,6 +54,19 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_nfp);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                if (cursor != null) {
+                    Intent intent = new Intent(getActivity(), DetailActivity.class);
+                    int idx = cursor.getColumnIndex(NotaFiscalEntry._ID);
+                    intent.setData(NotaFiscalEntry.buildNotaFiscalUri(cursor.getLong(idx)));
+                    getActivity().startActivity(intent);
+                }
+            }
+        });
 
         return rootView;
     }
@@ -112,10 +126,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             nf.setDate(new Date());
             nf.setExported(0);
             nf.setValidationData("abcdefghijklmnopqrstuvwxyz");
-            NumberFormat format = NumberFormat.getNumberInstance();
-            format.setMaximumFractionDigits(2);
-            format.setMinimumFractionDigits(2);
-            String value = format.format(random.nextDouble()*1000);
+            String value = Utility.formatToCurrency(random.nextDouble()*1000);
             nf.setValue(value);
             getActivity().getContentResolver().insert(NotaFiscalEntry.buildNotaFiscalUri(), nf.toContentValues());
             return true;

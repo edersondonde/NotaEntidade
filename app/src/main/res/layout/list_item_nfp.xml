@@ -11,13 +11,11 @@
         android:id="@+id/list_item_nfp_date"
         android:minHeight="?android:attr/listPreferredItemHeight"
         android:gravity="top"
-        android:text="@string/nfp_data_default"
         />
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent" android:layout_height="wrap_content"
         android:id="@+id/list_item_nfp_value"
         android:minHeight="?android:attr/listPreferredItemHeight"
         android:gravity="bottom"
-        android:text="@string/nfp_value_default"
         />
 </RelativeLayout>

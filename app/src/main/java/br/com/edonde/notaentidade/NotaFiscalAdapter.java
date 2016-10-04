@@ -33,19 +33,11 @@ public class NotaFiscalAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView dateText = (TextView) view.findViewById(R.id.list_item_nfp_date);
         int idxDate = cursor.getColumnIndex(NotaFiscalContract.NotaFiscalEntry.COLUMN_VALUE);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        dateText.setText(sdf.format(new Date(cursor.getLong(idxDate))));
+        dateText.setText(Utility.formatDate(cursor.getLong(idxDate)));
 
         TextView otherText = (TextView) view.findViewById(R.id.list_item_nfp_value);
-        otherText.setText(cursorRowToNFString(cursor));
-    }
-
-    private String cursorRowToNFString(Cursor cursor) {
-        int idxCode = cursor.getColumnIndex(NotaFiscalContract.NotaFiscalEntry.COLUMN_CODE);
         int idxValue = cursor.getColumnIndex(NotaFiscalContract.NotaFiscalEntry.COLUMN_VALUE);
-        NumberFormat nf = NumberFormat.getCurrencyInstance();
-
-        String text = nf.format(cursor.getDouble(idxValue));
-        return text;
+        otherText.setText(Utility.formatToCurrency(cursor.getDouble(idxValue)));
     }
+
 }

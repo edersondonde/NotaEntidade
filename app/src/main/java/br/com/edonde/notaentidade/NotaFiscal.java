@@ -16,7 +16,7 @@ public class NotaFiscal {
 
     private String code;
     private Date date;
-    private String value;
+    private double value;
     private String cnpj;
     private String validationData;
     private String cfNf;
@@ -38,7 +38,7 @@ public class NotaFiscal {
             //Ignore the date, and parse today's date
             nf.setDate(new Date());
         }
-        nf.setValue(data[2]);
+        nf.setValue(Double.valueOf(data[2]));
         nf.setCnpj(data[3]);
         nf.setValidationData(data[4]);
 
@@ -57,15 +57,11 @@ public class NotaFiscal {
         this.date = date;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setValue(String value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
-    public String getValue() {
+    public double getValue() {
         return value;
     }
 
@@ -73,28 +69,12 @@ public class NotaFiscal {
         this.cnpj = cnpj;
     }
 
-    public String getCnpj() {
-        return cnpj;
-    }
-
     public void setValidationData(String validationData) {
         this.validationData = validationData;
     }
 
-    public String getValidationData() {
-        return validationData;
-    }
-
-    public String getCfNf() {
-        return cfNf;
-    }
-
     public void setCfNf(String cfNf) {
         this.cfNf = cfNf;
-    }
-
-    public int getExported() {
-        return exported;
     }
 
     public void setExported(int exported) {
@@ -108,10 +88,12 @@ public class NotaFiscal {
 
     public ContentValues toContentValues() {
         ContentValues notaFiscalValues = new ContentValues();
+        notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_CNPJ, cnpj);
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_CODE, code);
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_DATE, date.getTime());
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_VALUE, value);
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_CF_NF, cfNf);
+        notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_VALIDATION_DATA, validationData);
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_EXPORTED, exported);
         return notaFiscalValues;
     }

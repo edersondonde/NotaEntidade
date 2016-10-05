@@ -37,6 +37,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final int NOTA_FISCAL_LOADER = 0;
     private NotaFiscalAdapter adapter;
 
+    private static final String[] NOTA_FISCAL_COLUMNS = {
+            NotaFiscalEntry._ID,
+            NotaFiscalEntry.COLUMN_VALUE,
+            NotaFiscalEntry.COLUMN_DATE,
+            NotaFiscalEntry.COLUMN_CODE
+    };
+
+    public static final int COL_NF_ID = 0;
+    public static final int COL_NF_VALUE = 1;
+    public static final int COL_NF_DATE = 2;
+    public static final int COL_NF_CODE = 3;
+
     public MainActivityFragment() {
     }
 
@@ -61,8 +73,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    int idx = cursor.getColumnIndex(NotaFiscalEntry._ID);
-                    intent.setData(NotaFiscalEntry.buildNotaFiscalUri(cursor.getLong(idx)));
+                    intent.setData(NotaFiscalEntry.buildNotaFiscalUri(cursor.getLong(COL_NF_ID)));
                     getActivity().startActivity(intent);
                 }
             }
@@ -92,7 +103,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     new String[]{nf.getCode()},
                     null);
             if (!cursor.moveToFirst()) {
-                Uri result =getActivity().getContentResolver().insert(nfUri, nf.toContentValues());
+                Uri result = getActivity().getContentResolver().insert(nfUri, nf.toContentValues());
                 Log.d(TAG, "New NF read, total "+ result + " nf read");
             } else {
 
@@ -126,8 +137,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             nf.setDate(new Date());
             nf.setExported(0);
             nf.setValidationData("abcdefghijklmnopqrstuvwxyz");
-            String value = Utility.formatToCurrency(random.nextDouble()*1000);
-            nf.setValue(value);
+            nf.setValue(random.nextDouble()*1000);
             getActivity().getContentResolver().insert(NotaFiscalEntry.buildNotaFiscalUri(), nf.toContentValues());
             return true;
         } //TODO: Deletar depois de testes
@@ -148,7 +158,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         return new CursorLoader(
                 getActivity(),
                 nfUri,
-                null,
+                NOTA_FISCAL_COLUMNS,
                 selection,
                 selectionArgs,
                 sortOrder);

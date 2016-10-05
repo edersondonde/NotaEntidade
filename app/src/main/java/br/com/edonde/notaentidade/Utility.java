@@ -1,6 +1,7 @@
 package br.com.edonde.notaentidade;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;

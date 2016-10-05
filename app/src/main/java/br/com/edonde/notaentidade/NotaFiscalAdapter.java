@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
@@ -26,18 +27,30 @@ public class NotaFiscalAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view = LayoutInflater.from(context).inflate(R.layout.list_item_nfp, parent, false);
+        ViewHolder holder = new ViewHolder(view);
+        view.setTag(holder);
         return view;
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView dateText = (TextView) view.findViewById(R.id.list_item_nfp_date);
-        int idxDate = cursor.getColumnIndex(NotaFiscalContract.NotaFiscalEntry.COLUMN_VALUE);
-        dateText.setText(Utility.formatDate(cursor.getLong(idxDate)));
+        ViewHolder holder = (ViewHolder) view.getTag();
 
-        TextView otherText = (TextView) view.findViewById(R.id.list_item_nfp_value);
-        int idxValue = cursor.getColumnIndex(NotaFiscalContract.NotaFiscalEntry.COLUMN_VALUE);
-        otherText.setText(Utility.formatToCurrency(cursor.getDouble(idxValue)));
+        holder.dateView.setText(
+                Utility.formatDate(cursor.getLong(MainActivityFragment.COL_NF_DATE)));
+
+        holder.valueView.setText(
+                Utility.formatToCurrency(cursor.getDouble(MainActivityFragment.COL_NF_VALUE)));
+    }
+
+    public static class ViewHolder {
+        public final TextView dateView;
+        public final TextView valueView;
+
+        public ViewHolder(View view) {
+            dateView = (TextView) view.findViewById(R.id.list_item_nfp_date);
+            valueView = (TextView) view.findViewById(R.id.list_item_nfp_value);
+        }
     }
 
 }

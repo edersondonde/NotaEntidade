@@ -30,7 +30,6 @@ public class NotaFiscalDbHelper extends SQLiteOpenHelper {
                 NotaFiscalEntry.COLUMN_VALUE + " REAL NOT NULL, " +
                 NotaFiscalEntry.COLUMN_CF_NF + " TEXT, " +
                 NotaFiscalEntry.COLUMN_VALIDATION_DATA + " TEXT, " +
-                NotaFiscalEntry.COLUMN_EXPORTED + " INTEGER NOT NULL, " +
                 "UNIQUE (" + NotaFiscalEntry.COLUMN_CODE + ") " +
                 "ON CONFLICT REPLACE" +
                 ");";

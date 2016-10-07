@@ -6,9 +6,14 @@
     <string name="share">Compartilhar</string>
     <string name="add_random">Adicionar Novo</string>
     <string name="delete_all">Delete All</string>
-    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_detail">Detalhes da Nota Fiscal</string>
     <string name="cnpj_label">CPF/CNPJ</string>
     <string name="value_label">Valor</string>
     <string name="date_label">Data</string>
     <string name="code_label">Chave</string>
+    <string name="authority">br.com.edonde.notaentidade</string>
+    <string name="zxing_title">Instalar Barcode Scanner?</string>
+    <string name="zxing_message">Essa aplicação requer o app Barcode Scanner. Gostaria de instalá-lo?</string>
+    <string name="zxing_yes">Sim</string>
+    <string name="zxing_no">Não</string>
 </resources>

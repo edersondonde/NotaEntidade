@@ -20,11 +20,8 @@ public class NotaFiscal {
     private String cnpj;
     private String validationData;
     private String cfNf;
-    private int exported;
     private static SimpleDateFormat sdfOutput = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private static SimpleDateFormat sdfInput = new SimpleDateFormat("yyyyMMddHHmmss");
-    private static NumberFormat nf = NumberFormat.getCurrencyInstance();
-
 
     public static NotaFiscal parseNF(String qrCodeData) {
         String[] data = qrCodeData.split("\\|");
@@ -41,16 +38,13 @@ public class NotaFiscal {
         nf.setValue(Double.valueOf(data[2]));
         nf.setCnpj(data[3]);
         nf.setValidationData(data[4]);
+        nf.setCfNf("CFeSAT");
 
         return nf;
     }
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getCode() {
-        return code;
     }
 
     public void setDate(Date date) {
@@ -77,13 +71,9 @@ public class NotaFiscal {
         this.cfNf = cfNf;
     }
 
-    public void setExported(int exported) {
-        this.exported = exported;
-    }
-
     @Override
     public String toString() {
-        return sdfOutput.format(date)+" "+nf.format(Double.valueOf(value));
+        return sdfOutput.format(date)+" "+Utility.formatToCurrency(value);
     }
 
     public ContentValues toContentValues() {
@@ -94,7 +84,6 @@ public class NotaFiscal {
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_VALUE, value);
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_CF_NF, cfNf);
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_VALIDATION_DATA, validationData);
-        notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_EXPORTED, exported);
         return notaFiscalValues;
     }
 }

@@ -6,6 +6,7 @@ import android.util.Log;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by maddo on 04/10/2016.
@@ -19,6 +20,15 @@ public class Utility {
         format.setMinimumFractionDigits(2);
 
         return "R$ "+format.format(value);
+    }
+
+    public static String formatToDecimal (double value) {
+        NumberFormat format = NumberFormat.getNumberInstance();
+        format.setMaximumFractionDigits(2);
+        format.setMinimumFractionDigits(2);
+        format.setGroupingUsed(false);
+
+        return format.format(value);
     }
 
     @NonNull

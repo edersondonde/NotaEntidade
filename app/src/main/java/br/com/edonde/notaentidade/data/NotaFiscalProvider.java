@@ -31,8 +31,6 @@ public class NotaFiscalProvider extends ContentProvider {
         queryBuilder.setTables(NotaFiscalEntry.TABLE_NAME);
     }
 
-    private static final String notaFiscalNotExported =
-            NotaFiscalEntry.COLUMN_EXPORTED + " = ? ";
     private static final String notaFiscalById =
             NotaFiscalEntry.TABLE_NAME + "." + NotaFiscalEntry._ID + " = ? ";
 
@@ -86,14 +84,6 @@ public class NotaFiscalProvider extends ContentProvider {
                 null,
                 sortOrder
         );
-        /*queryBuilder.query(openHelper.getReadableDatabase(),
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-        );*/
     }
 
     @Nullable

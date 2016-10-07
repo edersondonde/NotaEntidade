@@ -44,7 +44,6 @@ public class TestUtilities extends AndroidTestCase {
         notaFiscalValues.put(NotaFiscalEntry.COLUMN_DATE, TEST_DATE);
         notaFiscalValues.put(NotaFiscalEntry.COLUMN_VALUE, 1123.57);
         notaFiscalValues.put(NotaFiscalEntry.COLUMN_CF_NF, "CFeSAT");
-        notaFiscalValues.put(NotaFiscalEntry.COLUMN_EXPORTED, 0);
 
         return notaFiscalValues;
     }

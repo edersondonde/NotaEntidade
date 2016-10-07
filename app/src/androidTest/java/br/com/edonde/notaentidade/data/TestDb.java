@@ -69,7 +69,6 @@ public class TestDb extends AndroidTestCase {
         notaFiscalColumnHashSet.add(NotaFiscalEntry.COLUMN_CODE);
         notaFiscalColumnHashSet.add(NotaFiscalEntry.COLUMN_DATE);
         notaFiscalColumnHashSet.add(NotaFiscalEntry.COLUMN_VALUE);
-        notaFiscalColumnHashSet.add(NotaFiscalEntry.COLUMN_EXPORTED);
 
         int columnNameIndex = c.getColumnIndex("name");
         do {

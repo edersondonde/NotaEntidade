@@ -35,9 +35,6 @@ public class NotaFiscalContract {
         public static final String COLUMN_VALUE = "value";
         public static final String COLUMN_CF_NF = "cf_nf";
         public static final String COLUMN_VALIDATION_DATA = "validation_data";
-        public static final String COLUMN_EXPORTED = "exported";
-        public static final String NOT_EXPORTED = "0";
-        public static final String EXPORTED = "1";
 
         public static String getNotaFiscalIdFromUri(Uri uri) {
             return uri.getPathSegments().get(1);

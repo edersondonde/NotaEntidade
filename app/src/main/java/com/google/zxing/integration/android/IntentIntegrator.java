@@ -16,13 +16,6 @@
 
 package com.google.zxing.integration.android;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -34,6 +27,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>A utility class which helps ease integration with Barcode Scanner via {@link Intent}s. This is a simple
@@ -75,7 +75,7 @@ import android.util.Log;
  * user was prompted to download the application. This lets the calling app potentially manage the dialog.
  * In particular, ideally, the app dismisses the dialog if it's still active in its {@link Activity#onPause()}
  * method.</p>
- * 
+ *
  * <p>You can use {@link #setTitle(String)} to customize the title of this download prompt dialog (or, use
  * {@link #setTitleByID(int)} to set the title by string resource ID.) Likewise, the prompt message, and
  * yes/no button labels can be changed.</p>
@@ -83,7 +83,7 @@ import android.util.Log;
  * <p>Finally, you can use {@link #addExtra(String, Object)} to add more parameters to the Intent used
  * to invoke the scanner. This can be used to set additional options not directly exposed by this
  * simplified API.</p>
- * 
+ *
  * <p>By default, this will only allow applications that are known to respond to this intent correctly
  * do so. The apps that are allowed to response can be set with {@link #setTargetApplications(List)}.
  * For example, set to {@link #TARGET_BARCODE_SCANNER_ONLY} to only target the Barcode Scanner app itself.</p>
@@ -112,11 +112,11 @@ public class IntentIntegrator {
   public static final int REQUEST_CODE = 0x0000c0de; // Only use bottom 16 bits
   private static final String TAG = IntentIntegrator.class.getSimpleName();
 
-  public static final String DEFAULT_TITLE = "Instalar Barcode Scanner?";
+  public static final String DEFAULT_TITLE = "Install Barcode Scanner?";
   public static final String DEFAULT_MESSAGE =
-      "Essa aplicação requer o app Barcode Scanner. Gostaria de instalá-lo?";
-  public static final String DEFAULT_YES = "Sim";
-  public static final String DEFAULT_NO = "Não";
+          "This application requires Barcode Scanner. Would you like to install it?";
+  public static final String DEFAULT_YES = "Yes";
+  public static final String DEFAULT_NO = "No";
 
   private static final String BS_PACKAGE = "com.google.zxing.client.android";
   private static final String BSPLUS_PACKAGE = "com.srowen.bs.android";
@@ -124,21 +124,21 @@ public class IntentIntegrator {
   // supported barcode formats
   public static final Collection<String> PRODUCT_CODE_TYPES = list("UPC_A", "UPC_E", "EAN_8", "EAN_13", "RSS_14");
   public static final Collection<String> ONE_D_CODE_TYPES =
-      list("UPC_A", "UPC_E", "EAN_8", "EAN_13", "CODE_39", "CODE_93", "CODE_128",
-           "ITF", "RSS_14", "RSS_EXPANDED");
+          list("UPC_A", "UPC_E", "EAN_8", "EAN_13", "CODE_39", "CODE_93", "CODE_128",
+                  "ITF", "RSS_14", "RSS_EXPANDED");
   public static final Collection<String> QR_CODE_TYPES = Collections.singleton("QR_CODE");
   public static final Collection<String> DATA_MATRIX_TYPES = Collections.singleton("DATA_MATRIX");
 
   public static final Collection<String> ALL_CODE_TYPES = null;
-  
+
   public static final List<String> TARGET_BARCODE_SCANNER_ONLY = Collections.singletonList(BS_PACKAGE);
   public static final List<String> TARGET_ALL_KNOWN = list(
           BSPLUS_PACKAGE,             // Barcode Scanner+
           BSPLUS_PACKAGE + ".simple", // Barcode Scanner+ Simple
-          BS_PACKAGE                  // Barcode Scanner          
+          BS_PACKAGE                  // Barcode Scanner
           // What else supports this intent?
-      );
-  
+  );
+
   private final Activity activity;
   private final Fragment fragment;
 
@@ -176,11 +176,11 @@ public class IntentIntegrator {
     buttonNo = DEFAULT_NO;
     targetApplications = TARGET_ALL_KNOWN;
   }
-  
+
   public String getTitle() {
     return title;
   }
-  
+
   public void setTitle(String title) {
     this.title = title;
   }
@@ -224,18 +224,18 @@ public class IntentIntegrator {
   public void setButtonNoByID(int buttonNoID) {
     buttonNo = activity.getString(buttonNoID);
   }
-  
+
   public Collection<String> getTargetApplications() {
     return targetApplications;
   }
-  
+
   public final void setTargetApplications(List<String> targetApplications) {
     if (targetApplications.isEmpty()) {
       throw new IllegalArgumentException("No target applications");
     }
     this.targetApplications = targetApplications;
   }
-  
+
   public void setSingleTargetApplication(String targetApplication) {
     this.targetApplications = Collections.singletonList(targetApplication);
   }
@@ -257,7 +257,7 @@ public class IntentIntegrator {
   public final AlertDialog initiateScan() {
     return initiateScan(ALL_CODE_TYPES, -1);
   }
-  
+
   /**
    * Initiates a scan for all known barcode types with the specified camera.
    *
@@ -281,7 +281,7 @@ public class IntentIntegrator {
   public final AlertDialog initiateScan(Collection<String> desiredBarcodeFormats) {
     return initiateScan(desiredBarcodeFormats, -1);
   }
-  
+
   /**
    * Initiates a scan, using the specified camera, only for a certain set of barcode types, given as strings corresponding
    * to their names in ZXing's {@code BarcodeFormat} class like "UPC_A". You can supply constants
@@ -342,7 +342,7 @@ public class IntentIntegrator {
       fragment.startActivityForResult(intent, code);
     }
   }
-  
+
   private String findTargetAppPackage(Intent intent) {
     PackageManager pm = activity.getPackageManager();
     List<ResolveInfo> availableApps = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -355,7 +355,7 @@ public class IntentIntegrator {
     }
     return null;
   }
-  
+
   private static boolean contains(Iterable<ResolveInfo> availableApps, String targetApp) {
     for (ResolveInfo availableApp : availableApps) {
       String packageName = availableApp.activityInfo.packageName;
@@ -422,10 +422,10 @@ public class IntentIntegrator {
         Integer orientation = intentOrientation == Integer.MIN_VALUE ? null : intentOrientation;
         String errorCorrectionLevel = intent.getStringExtra("SCAN_RESULT_ERROR_CORRECTION_LEVEL");
         return new IntentResult(contents,
-                                formatName,
-                                rawBytes,
-                                orientation,
-                                errorCorrectionLevel);
+                formatName,
+                rawBytes,
+                orientation,
+                errorCorrectionLevel);
       }
       return new IntentResult();
     }
@@ -475,7 +475,7 @@ public class IntentIntegrator {
     }
     return null;
   }
-  
+
   private static List<String> list(String... values) {
     return Collections.unmodifiableList(Arrays.asList(values));
   }

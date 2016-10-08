@@ -11,9 +11,14 @@
     <string name="value_label">Valor</string>
     <string name="date_label">Data</string>
     <string name="code_label">Chave</string>
-    <string name="authority">br.com.edonde.notaentidade</string>
+    <string name="email_subject">Notas Fiscais lidas pelo Nota Entidade</string>
+    <string name="email_body">Nota Entidade</string>
+
     <string name="zxing_title">Instalar Barcode Scanner?</string>
     <string name="zxing_message">Essa aplicação requer o app Barcode Scanner. Gostaria de instalá-lo?</string>
     <string name="zxing_yes">Sim</string>
     <string name="zxing_no">Não</string>
+    <string name="delete_menu">Apagar Nota Fiscal</string>
+    <string name="error_wrong_nf">Não foi possível ler o QrCode</string>
+    <string name="error_existing_cpf_cnpj">A Nota Fiscal já possui CPF/CNPJ cadastrado.</string>
 </resources>

@@ -23,8 +23,18 @@ public class NotaFiscal {
     private static SimpleDateFormat sdfOutput = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private static SimpleDateFormat sdfInput = new SimpleDateFormat("yyyyMMddHHmmss");
 
-    public static NotaFiscal parseNF(String qrCodeData) {
+    public static NotaFiscal parseNF(String qrCodeData) throws ParseException, ExistingCpfCnpjException {
+        if (qrCodeData == null || qrCodeData.isEmpty()) {
+            throw new ParseException("QrCode data is empty", 0);
+        }
         String[] data = qrCodeData.split("\\|");
+        if (data.length < 5) {
+            throw new ParseException("QrCode data isn't valid", 0);
+        }
+        if(data[3] != null && !data[3].isEmpty()) {
+            throw new ExistingCpfCnpjException("There is an CPF/CNPJ on the NF already.");
+        }
+
 
         NotaFiscal nf = new NotaFiscal();
         nf.setCode(data[0]);
@@ -36,7 +46,7 @@ public class NotaFiscal {
             nf.setDate(new Date());
         }
         nf.setValue(Double.valueOf(data[2]));
-        nf.setCnpj(data[3]);
+        nf.setCnpj("");
         nf.setValidationData(data[4]);
         nf.setCfNf("CFeSAT");
 

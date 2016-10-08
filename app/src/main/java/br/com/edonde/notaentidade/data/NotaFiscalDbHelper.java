@@ -12,7 +12,7 @@ import br.com.edonde.notaentidade.data.NotaFiscalContract.NotaFiscalEntry;
  */
 public class NotaFiscalDbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
     static final String DATABASE_NAME = "notafiscal.db";
 

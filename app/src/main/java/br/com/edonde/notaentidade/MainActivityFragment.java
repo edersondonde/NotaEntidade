@@ -12,12 +12,16 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -25,6 +29,9 @@ import com.google.zxing.integration.android.IntentResult;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Random;
 
 import br.com.edonde.notaentidade.data.NotaFiscalContract.NotaFiscalEntry;
 
@@ -75,6 +82,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
+        registerForContextMenu(listView);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -88,6 +97,29 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        if (item.getItemId() == R.id.action_delete) {
+            Cursor c = (Cursor)adapter.getItem(info.position);
+
+            getActivity().getContentResolver().delete(
+                    NotaFiscalEntry.buildNotaFiscalUri(),
+                    NotaFiscalEntry._ID + " = ?",
+                    new String[]{Long.toString(c.getLong(COL_NF_ID))});
+
+            return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -110,10 +142,18 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             if (scanResult != null && scanResult.getContents() != null) {
                 Log.d(TAG, "Scan result: " + scanResult.getContents());
 
-                final NotaFiscal nf = NotaFiscal.parseNF(scanResult.getContents());
-                Uri nfUri = NotaFiscalEntry.buildNotaFiscalUri();
-                Uri result = getActivity().getContentResolver().insert(nfUri, nf.toContentValues());
-                Log.d(TAG, "New NF read, total " + result + " nf read");
+                final NotaFiscal nf;
+                try {
+                    nf = NotaFiscal.parseNF(scanResult.getContents());
+                    Uri nfUri = NotaFiscalEntry.buildNotaFiscalUri();
+                    Uri result = getActivity().getContentResolver().insert(nfUri, nf.toContentValues());
+                    Log.d(TAG, "New NF read, total " + result + " nf read");
+                } catch (ParseException e) {
+                    Toast.makeText(getActivity(), R.string.error_wrong_nf, Toast.LENGTH_LONG);
+                } catch (ExistingCpfCnpjException e) {
+                    Toast.makeText(getActivity(), R.string.error_existing_cpf_cnpj, Toast.LENGTH_LONG);
+                }
+
 
             } else {
                 Log.i(TAG, "No results returned");
@@ -146,8 +186,8 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Notas Fiscais lidas pelo Nota Entidade");
-        intent.putExtra(Intent.EXTRA_TEXT, "Nota Entidade");
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_body));
         intent.putExtra(Intent.EXTRA_STREAM, fileUri);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         return intent;

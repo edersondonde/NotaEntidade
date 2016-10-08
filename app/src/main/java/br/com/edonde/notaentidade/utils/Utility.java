@@ -1,4 +1,4 @@
-package br.com.edonde.notaentidade;
+package br.com.edonde.notaentidade.utils;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -9,11 +9,15 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by maddo on 04/10/2016.
+ * Utility class with methods to help the exhibition of data in the interface
  */
-
 public class Utility {
 
+    /**
+     * Converts a double to the format R$ #.###,##
+     * @param value Double value to be converted
+     * @return String with the representation of the data
+     */
     public static String formatToCurrency (double value) {
         NumberFormat format = NumberFormat.getNumberInstance();
         format.setMaximumFractionDigits(2);
@@ -22,6 +26,11 @@ public class Utility {
         return "R$ "+format.format(value);
     }
 
+    /**
+     * Converts a double to the format ####,##
+     * @param value Double value to be converted
+     * @return String with the representation of the data
+     */
     public static String formatToDecimal (double value) {
         NumberFormat format = NumberFormat.getNumberInstance();
         format.setMaximumFractionDigits(2);
@@ -31,6 +40,11 @@ public class Utility {
         return format.format(value);
     }
 
+    /**
+     * Formats a string to CPF or CNPJ format.
+     * @param cpfcnpj String to be formatted
+     * @return String with the CPF or CNPJ formatted, or a message if
+     */
     @NonNull
     public static String formatCpfCnpj(String cpfcnpj) {
         if (cpfcnpj != null && !cpfcnpj.equals("")) {
@@ -63,6 +77,11 @@ public class Utility {
         return cpfcnpj;
     }
 
+    /**
+     * Format a date in milliseconds to dd/MM/yyyy format
+     * @param dateInMillis Date in milliseconds
+     * @return String representing the date in the format dd/MM/yyyy
+     */
     public static String formatDate(long dateInMillis) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(new Date(dateInMillis));

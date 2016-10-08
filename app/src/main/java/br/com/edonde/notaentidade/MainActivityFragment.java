@@ -14,6 +14,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,15 +31,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.Random;
 
 import br.com.edonde.notaentidade.data.NotaFiscalContract.NotaFiscalEntry;
+import br.com.edonde.notaentidade.model.NotaFiscal;
+import br.com.edonde.notaentidade.utils.Utility;
 
-import static android.app.Activity.RESULT_OK;
 
 /**
- * A placeholder fragment containing a simple view.
+ * MainActivityFragment contains the interface and methods for reading,
+ * exhibiting and sharing the Nota Fiscal items
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -49,6 +50,10 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     private static final int SHARE_REQUEST_CODE = 429;
     private NotaFiscalAdapter adapter;
 
+    /**
+     * Columns used as projection for reading and exhibiting
+     * the Nota Fiscal items on the screen
+     */
     private static final String[] NOTA_FISCAL_COLUMNS = {
             NotaFiscalEntry._ID,
             NotaFiscalEntry.COLUMN_VALUE,
@@ -62,9 +67,6 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public static final int COL_NF_DATE = 2;
     public static final int COL_NF_CODE = 3;
     public static final int COL_CF_NF = 4;
-
-    public MainActivityFragment() {
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,23 +82,27 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_nfp);
         listView.setAdapter(adapter);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         registerForContextMenu(listView);
 
+        //On item click, opens the Detail Activity exhibiting the Nota Fiscal relative to it
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    intent.setData(NotaFiscalEntry.buildNotaFiscalUri(cursor.getLong(COL_NF_ID)));
-                    getActivity().startActivity(intent);
+                    final long notaFiscalId = cursor.getLong(COL_NF_ID);
+                    startDetailActivity(notaFiscalId);
                 }
             }
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_command, menu);
     }
 
     @Override
@@ -109,14 +115,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        //Deletes the Nota Fiscal selected
         if (item.getItemId() == R.id.action_delete) {
             Cursor c = (Cursor)adapter.getItem(info.position);
-
-            getActivity().getContentResolver().delete(
-                    NotaFiscalEntry.buildNotaFiscalUri(),
+            deleteNotaFiscal(
                     NotaFiscalEntry._ID + " = ?",
                     new String[]{Long.toString(c.getLong(COL_NF_ID))});
-
             return true;
         }
         return super.onContextItemSelected(item);
@@ -131,13 +135,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(LOG_TAG, "Activity result on fragment: "+ requestCode+" "+resultCode);
+        //After sharing the Nota Fiscal items, deletes all of them
         if (requestCode == SHARE_REQUEST_CODE) {
-            int deleted = getActivity().getContentResolver().delete(
-                    NotaFiscalEntry.buildNotaFiscalUri(),
-                    null,
-                    null);
+            int deleted = deleteNotaFiscal(null, null);
             Log.d(LOG_TAG, "Deleted "+deleted+" items");
-        } else if (requestCode == IntentIntegrator.REQUEST_CODE){
+        }
+        //After reading the QrCode, parses it and stores on the Database
+        else if (requestCode == IntentIntegrator.REQUEST_CODE){
             IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (scanResult != null && scanResult.getContents() != null) {
                 Log.d(TAG, "Scan result: " + scanResult.getContents());
@@ -149,48 +153,48 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     Uri result = getActivity().getContentResolver().insert(nfUri, nf.toContentValues());
                     Log.d(TAG, "New NF read, total " + result + " nf read");
                 } catch (ParseException e) {
-                    Toast.makeText(getActivity(), R.string.error_wrong_nf, Toast.LENGTH_LONG);
+                    //Exhibits a toast to the user if reading data was unsucessful
+                    Toast.makeText(getActivity(), R.string.error_wrong_nf, Toast.LENGTH_LONG).show();
                 } catch (ExistingCpfCnpjException e) {
-                    Toast.makeText(getActivity(), R.string.error_existing_cpf_cnpj, Toast.LENGTH_LONG);
+                    //Exhibits a toast to the user if the
+                    // Nota Fiscal read already has CPF/CNPJ registered
+                    Toast.makeText(getActivity(), R.string.error_existing_cpf_cnpj, Toast.LENGTH_LONG).show();
                 }
-
-
             } else {
                 Log.i(TAG, "No results returned");
             }
         }
     }
 
+    /**
+     * Deletes the Nota Fiscal items that matches the selection.
+     * If selection and selection args are null, deletes all items
+     * @param selection Selection string
+     * @param selectionArgs List of arguments
+     * @return The number of items deleted
+     */
+    public int deleteNotaFiscal(String selection, String[] selectionArgs) {
+        return getActivity().getContentResolver().delete(
+                NotaFiscalEntry.buildNotaFiscalUri(),
+                selection,
+                selectionArgs);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        //Starts the QrCode intent. Opens an option to
+        // install Barcode Scanner if it is not installed
         if (id == R.id.add_qrcode) {
-            IntentIntegrator integrator = new IntentIntegrator(this);
-            integrator.setTitleByID(R.string.zxing_title);
-            integrator.setMessageByID(R.string.zxing_message);
-            integrator.setButtonYesByID(R.string.zxing_yes);
-            integrator.setButtonNoByID(R.string.zxing_no);
-            integrator.addExtra("RESULT_DISPLAY_DURATION_MS", 500L);
-            integrator.initiateScan(IntentIntegrator.QR_CODE_TYPES);
-
+            startQrCodeIntent();
             return true;
-        } else if (id == R.id.action_share) {
+        }
+        //Starts the share activity
+        else if (id == R.id.action_share) {
             Intent intent = createShareIntent(generateCsv());
             startActivityForResult(intent, SHARE_REQUEST_CODE);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @NonNull
-    private Intent createShareIntent(Uri fileUri) {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
-        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_body));
-        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        return intent;
     }
 
     @Override
@@ -225,13 +229,62 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
     }
 
+    /**
+     * Creates the share intent with all the options and the csv file
+     * @param fileUri File Uri of the csv file
+     * @return Share intent
+     */
+    @NonNull
+    private Intent createShareIntent(Uri fileUri) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.email_body));
+        intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        return intent;
+    }
+
+    /**
+     * Creates the QrCode intent and initiates it.
+     */
+    public void startQrCodeIntent() {
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setTitleByID(R.string.zxing_title);
+        integrator.setMessageByID(R.string.zxing_message);
+        integrator.setButtonYesByID(R.string.zxing_yes);
+        integrator.setButtonNoByID(R.string.zxing_no);
+        integrator.addExtra("RESULT_DISPLAY_DURATION_MS", 500L);
+        integrator.initiateScan(IntentIntegrator.QR_CODE_TYPES);
+    }
+
+    /**
+     * Creates and starts the intent for the Detail Activity
+     * @param notaFiscalId The id of the Nota Fiscal item to the Detail Activity
+     */
+    public void startDetailActivity(long notaFiscalId) {
+        Intent intent = new Intent(getActivity(), DetailActivity.class);
+        intent.setData(NotaFiscalEntry.buildNotaFiscalUri(notaFiscalId));
+        getActivity().startActivity(intent);
+    }
+
+    /**
+     * Reads the database and fills a csv file with the data.
+     * The data is passed in the sequence CNPJ, Data, Codigo, Valor, CFouNF.
+     * Each Nota Fiscal item is a line of the csv file.
+     * Creating a new file will override the old file
+     *
+     * @return The uri of the file created.
+     */
     private Uri generateCsv() {
         Uri fileUri = null;
         try {
             String fileName = "NotasCsv.csv";
             File csvDir = new File (getContext().getFilesDir(), "csv");
             File csvFile = new File(csvDir, fileName);
-            csvDir.mkdir();
+            if (!csvDir.exists())
+                csvDir.mkdir();
 
             Log.d(LOG_TAG, "Writing to output");
             final FileOutputStream out = new FileOutputStream(csvFile);
@@ -243,7 +296,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                     null,
                     null,
                     NotaFiscalEntry._ID + " ASC");
-            if (cursor.moveToFirst()) {
+            if (cursor != null && cursor.moveToFirst()) {
                 osw.write("\"CNPJ\",\"Data\",\"Codigo\",\"Valor\",\"CFouNF\"\n");
                 do {
                     osw.write(",");
@@ -270,6 +323,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 out.close();
 
                 fileUri = FileProvider.getUriForFile(getActivity(), "br.com.edonde.notaentidade.fileprovider", csvFile);
+                cursor.close();
             }
 
         } catch (Exception e) {

@@ -11,11 +11,11 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import br.com.edonde.notaentidade.NotaFiscal;
 import br.com.edonde.notaentidade.data.NotaFiscalContract.NotaFiscalEntry;
 
+
 /**
- * Created by maddo on 02/01/2016.
+ * Provider class for the Nota Fiscal database
  */
 public class NotaFiscalProvider extends ContentProvider {
 
@@ -24,13 +24,9 @@ public class NotaFiscalProvider extends ContentProvider {
     static final int NOTA_FISCAL_ITEM = 101;
     private NotaFiscalDbHelper openHelper;
 
-    private static final SQLiteQueryBuilder queryBuilder;
-
-    static {
-        queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(NotaFiscalEntry.TABLE_NAME);
-    }
-
+    /**
+     * Selection for searching by id
+     */
     private static final String notaFiscalById =
             NotaFiscalEntry.TABLE_NAME + "." + NotaFiscalEntry._ID + " = ? ";
 
@@ -46,7 +42,7 @@ public class NotaFiscalProvider extends ContentProvider {
         Cursor retCursor;
         switch (uriMatcher.match(uri)) {
             case NOTA_FISCAL:
-                retCursor = getNotaFiscal(uri, selection, selectionArgs, projection, sortOrder);
+                retCursor = getNotaFiscal(selection, selectionArgs, projection, sortOrder);
                 break;
             case NOTA_FISCAL_ITEM:
                 retCursor = getNotaFiscalById(uri, projection, sortOrder);
@@ -58,12 +54,20 @@ public class NotaFiscalProvider extends ContentProvider {
         return retCursor;
     }
 
+    /**
+     * Queries the database for a Nota Fiscal item
+     * @param uri Uri containing the reference to the Nota Fiscal item
+     * @param projection List of columns to be selected
+     * @param sortOrder Order of the selectoin
+     * @return Cursor with the query result
+     */
     private Cursor getNotaFiscalById(Uri uri, String[] projection, String sortOrder) {
         String selection = notaFiscalById;
         String id = NotaFiscalEntry.getNotaFiscalIdFromUri(uri);
         String[] selectionArgs = new String[]{id};
 
-        return queryBuilder.query(openHelper.getReadableDatabase(),
+        return openHelper.getReadableDatabase().query(
+                NotaFiscalEntry.TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -73,7 +77,15 @@ public class NotaFiscalProvider extends ContentProvider {
         );
     }
 
-    private Cursor getNotaFiscal(Uri uri, String selection, String[] selectionArgs, String[] projection, String sortOrder) {
+    /**
+     * Generic query of the database
+     * @param selection Selection string
+     * @param selectionArgs List of arguments for the selection
+     * @param projection List of columns of the projection
+     * @param sortOrder Sort order
+     * @return Cursor with the result
+     */
+    private Cursor getNotaFiscal(String selection, String[] selectionArgs, String[] projection, String sortOrder) {
 
         return openHelper.getReadableDatabase().query(
                 NotaFiscalEntry.TABLE_NAME,
@@ -170,6 +182,12 @@ public class NotaFiscalProvider extends ContentProvider {
         return rowsUpdated;
     }
 
+    /**
+     * Uri matcher builder, accepts uril like content://br.com.edonde.notaentidade/notafiscal
+     *  and content://br.com.edonde.notaentidade/notafiscal/#
+     *
+     * @return UriMatcher object
+     */
     static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = NotaFiscalContract.CONTENT_AUTHORITY;

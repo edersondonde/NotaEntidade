@@ -6,17 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import br.com.edonde.notaentidade.data.NotaFiscalContract;
+import br.com.edonde.notaentidade.utils.Utility;
 
 /**
- * Created by maddo on 24/04/2016.
+ * Cursor Adapter with nota Fiscal items to be exhibited in a ListView
  */
 public class NotaFiscalAdapter extends CursorAdapter {
 
@@ -43,7 +38,10 @@ public class NotaFiscalAdapter extends CursorAdapter {
                 Utility.formatToCurrency(cursor.getDouble(MainActivityFragment.COL_NF_VALUE)));
     }
 
-    public static class ViewHolder {
+    /**
+     * Holder of the views in the ListViewItem
+     */
+    private static class ViewHolder {
         public final TextView dateView;
         public final TextView valueView;
 

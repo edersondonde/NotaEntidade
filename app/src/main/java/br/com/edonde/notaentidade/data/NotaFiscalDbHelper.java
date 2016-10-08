@@ -4,16 +4,18 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import br.com.edonde.notaentidade.NotaFiscal;
 import br.com.edonde.notaentidade.data.NotaFiscalContract.NotaFiscalEntry;
 
 /**
- * Created by maddo on 02/01/2016.
+ * DbHelper class for the Nota Entidade database
  */
 public class NotaFiscalDbHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
 
+    /**
+     * File Name of the database
+     */
     static final String DATABASE_NAME = "notafiscal.db";
 
     public NotaFiscalDbHelper(Context context) {

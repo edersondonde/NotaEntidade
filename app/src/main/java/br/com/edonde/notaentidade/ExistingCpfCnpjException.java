@@ -1,10 +1,15 @@
 package br.com.edonde.notaentidade;
 
 /**
- * Created by maddo on 08/10/2016.
+ * Expection to be thrown when a Nota Fiscal read already has CPF/CNPJ registered
  */
 public class ExistingCpfCnpjException extends Exception {
-    public ExistingCpfCnpjException(String s) {
-        super(s);
+
+    /**
+     * Basic constructor with the error message
+     * @param message Error message
+     */
+    public ExistingCpfCnpjException(String message) {
+        super(message);
     }
 }

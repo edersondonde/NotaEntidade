@@ -1,11 +1,10 @@
 package br.com.edonde.notaentidade;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-/**
- * Created by maddo on 04/10/2016.
- */
+import br.com.edonde.notaentidade.utils.Utility;
+
+import static org.junit.Assert.*;
 
 public class UtilityTest {
 

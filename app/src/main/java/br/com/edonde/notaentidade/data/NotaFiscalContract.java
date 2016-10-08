@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
- * Created by maddo on 02/01/2016.
+ * Contract of the database
  */
 public class NotaFiscalContract {
 
@@ -17,6 +17,9 @@ public class NotaFiscalContract {
     public static final String PATH_NOTA_FISCAL = "notafiscal";
 
 
+    /**
+     * NotaFiscal entry containing the details of the NotaFiscal table
+     */
     public static final class NotaFiscalEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
@@ -40,10 +43,19 @@ public class NotaFiscalContract {
             return uri.getPathSegments().get(1);
         }
 
+        /**
+         * Builds the generic Nota Fiscal uri
+         * @return Nota Fiscal uri
+         */
         public static Uri buildNotaFiscalUri() {
             return CONTENT_URI;
         }
 
+        /**
+         * Builds the item Nota Fiscal uri based on the item id
+         * @param id The id of the Nota Fiscal item in the database
+         * @return Nota Fiscal uri of the Nota Fiscal item
+         */
         public static Uri buildNotaFiscalUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }

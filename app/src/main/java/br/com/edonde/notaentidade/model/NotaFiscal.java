@@ -1,16 +1,18 @@
-package br.com.edonde.notaentidade;
+package br.com.edonde.notaentidade.model;
 
 import android.content.ContentValues;
 
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import br.com.edonde.notaentidade.ExistingCpfCnpjException;
 import br.com.edonde.notaentidade.data.NotaFiscalContract;
+import br.com.edonde.notaentidade.utils.Utility;
+
 
 /**
- * Created by maddo on 20/11/2015.
+ * Nota fiscal class representing the Nota Fiscal on the database
  */
 public class NotaFiscal {
 
@@ -23,6 +25,14 @@ public class NotaFiscal {
     private static SimpleDateFormat sdfOutput = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private static SimpleDateFormat sdfInput = new SimpleDateFormat("yyyyMMddHHmmss");
 
+    /**
+     * Reads the QrCode data and parses it in a Nota Fiscal item. The QrCode shall be
+     * in the format CODE|DATE|VALUE|CPFCNPJ|VALIDATION_DATA.
+     * @param qrCodeData String representing the QrCode data read
+     * @return The parsed Nota Fiscal item
+     * @throws ParseException If the QrCode does not represent a Nota Fiscal item
+     * @throws ExistingCpfCnpjException If the Nota Fiscal already has a CPF/CNPJ registered
+     */
     public static NotaFiscal parseNF(String qrCodeData) throws ParseException, ExistingCpfCnpjException {
         if (qrCodeData == null || qrCodeData.isEmpty()) {
             throw new ParseException("QrCode data is empty", 0);
@@ -83,9 +93,14 @@ public class NotaFiscal {
 
     @Override
     public String toString() {
-        return sdfOutput.format(date)+" "+Utility.formatToCurrency(value);
+        return sdfOutput.format(date)+" "+ Utility.formatToCurrency(value);
     }
 
+    /**
+     * Converts the Nota Fiscal item to a ContentValues object, to be used on database operations
+     *
+     * @return ContentValues representing the Nota Fiscal item
+     */
     public ContentValues toContentValues() {
         ContentValues notaFiscalValues = new ContentValues();
         notaFiscalValues.put(NotaFiscalContract.NotaFiscalEntry.COLUMN_CNPJ, cnpj);

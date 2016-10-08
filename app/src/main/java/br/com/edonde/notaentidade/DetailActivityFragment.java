@@ -16,15 +16,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import br.com.edonde.notaentidade.data.NotaFiscalContract.NotaFiscalEntry;
+import br.com.edonde.notaentidade.utils.Utility;
 
 /**
- * A placeholder fragment containing a simple view.
+ * DetailActivityFragment contains the interface and methods for creating an interface with the
+ * details of a Nota Fiscal item. It loads the item by a LoaderManager
  */
 public class DetailActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private static final int DETAIL_LOADER = 0;
 
+    /**
+     * List of columns to be used as projection when loading the cursor
+     */
     private static final String[] NOTA_FISCAL_COLUMNS = {
             NotaFiscalEntry._ID,
             NotaFiscalEntry.COLUMN_CNPJ,
@@ -33,18 +38,15 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
             NotaFiscalEntry.COLUMN_CODE
     };
 
-    public static final int COL_NF_CNPJ = 1;
-    public static final int COL_NF_VALUE = 2;
-    public static final int COL_NF_DATE = 3;
-    public static final int COL_NF_CODE = 4;
+    private static final int COL_NF_CNPJ = 1;
+    private static final int COL_NF_VALUE = 2;
+    private static final int COL_NF_DATE = 3;
+    private static final int COL_NF_CODE = 4;
 
     private TextView mCnpjView;
     private TextView mValueView;
     private TextView mDateView;
     private TextView mCodeView;
-
-    public DetailActivityFragment() {
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,6 +73,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
         if (intent == null) {
             return null;
         }
+        //Loading the data based on the uri passed by the intent
         Uri uri = intent.getData();
         Log.d(LOG_TAG, "Detail uri: "+uri.toString());
         return new CursorLoader(
@@ -85,6 +88,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        //Filling the fields with the data loaded from the cursor
         if(data != null && data.moveToFirst()) {
             String cnpj = data.getString(COL_NF_CNPJ);
             cnpj = Utility.formatCpfCnpj(cnpj);

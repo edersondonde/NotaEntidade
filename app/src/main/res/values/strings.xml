@@ -15,10 +15,11 @@
     <string name="email_body">Nota Entidade</string>
 
     <string name="zxing_title">Instalar Barcode Scanner?</string>
-    <string name="zxing_message">Essa aplicação requer o app Barcode Scanner. Gostaria de instalá-lo?</string>
+    <string name="zxing_message">Para ler as informações do QrCode, é necessário instalar o aplicativo Barcode Scanner. Gostaria de instalá-lo?</string>
     <string name="zxing_yes">Sim</string>
     <string name="zxing_no">Não</string>
     <string name="delete_menu">Apagar Nota Fiscal</string>
     <string name="error_wrong_nf">Não foi possível ler o QrCode</string>
     <string name="error_existing_cpf_cnpj">A Nota Fiscal já possui CPF/CNPJ cadastrado.</string>
+    <string name="error_empty_share">Não há notas fiscais para compartilhar.</string>
 </resources>

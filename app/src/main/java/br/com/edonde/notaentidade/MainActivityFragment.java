@@ -191,8 +191,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         }
         //Starts the share activity
         else if (id == R.id.action_share) {
-            Intent intent = createShareIntent(generateCsv());
-            startActivityForResult(intent, SHARE_REQUEST_CODE);
+            Uri shareUri = generateCsv();
+            if (shareUri != null) {
+                Intent intent = createShareIntent(shareUri);
+                startActivityForResult(intent, SHARE_REQUEST_CODE);
+            } else {
+                Toast.makeText(getActivity(), R.string.error_empty_share, Toast.LENGTH_LONG)
+                        .show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
